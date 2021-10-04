@@ -1,19 +1,4 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
@@ -34,23 +19,21 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.File = void 0;
-var fs = __importStar(require("fs-extra"));
-var path = __importStar(require("path"));
-var common_1 = require("./common");
-var component_1 = require("./component");
-var File = /** @class */ (function (_super) {
-    __extends(File, _super);
-    function File(project, filePath, options) {
-        var _this = _super.call(this, project) || this;
-        _this.relativePath = filePath;
-        _this.absolutePath = path.resolve(project.outdir, filePath);
-        return _this;
+exports.FileBase = void 0;
+const fs = __importStar(require("fs-extra"));
+const path = __importStar(require("path"));
+const common_1 = require("./common");
+const component_1 = require("./component");
+const project_1 = require("./project");
+class FileBase extends component_1.Component {
+    constructor(scope, name, options) {
+        super(scope, name);
+        this.relativePath = options.filePath;
     }
-    File.prototype.synthesize = function () {
-        var outdir = this.project.outdir;
-        var filePath = path.join(outdir, this.relativePath);
-        var content = this.synthesizeContent();
+    synthesize() {
+        const outdir = project_1.Project.of(this).outdir;
+        const filePath = path.join(outdir, this.relativePath);
+        const content = this.synthesizeContent();
         if (content === undefined) {
             return; // skip
         }
@@ -60,8 +43,7 @@ var File = /** @class */ (function (_super) {
         fs.mkdirpSync(path.dirname(filePath));
         fs.writeFileSync(filePath, content);
         fs.chmodSync(filePath, '400'); // readonly, not executable
-    };
-    File.PROJEN_MARKER = common_1.PROJEN_MARKER + ". To modify, edit " + common_1.PROJEN_RC + " and run \"npx projen\".";
-    return File;
-}(component_1.Component));
-exports.File = File;
+    }
+}
+exports.FileBase = FileBase;
+FileBase.PROJEN_MARKER = `${common_1.PROJEN_MARKER}. To modify, edit ${common_1.PROJEN_RC} and run "npx projen".`;

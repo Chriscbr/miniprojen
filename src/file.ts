@@ -1,25 +1,26 @@
+import { Construct } from 'constructs';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { PROJEN_MARKER, PROJEN_RC } from './common';
 import { Component } from "./component";
 import { Project } from './project';
 
-export interface FileOptions {}
+export interface FileBaseOptions {
+  readonly filePath: string;
+}
 
-export abstract class File extends Component {
+export abstract class FileBase extends Component {
   public static readonly PROJEN_MARKER = `${PROJEN_MARKER}. To modify, edit ${PROJEN_RC} and run "npx projen".`;
   public readonly relativePath: string;
-  public readonly absolutePath: string;
-  constructor(project: Project, filePath: string, options: FileOptions) {
-    super(project);
-    this.relativePath = filePath;
-    this.absolutePath = path.resolve(project.outdir, filePath);
+  constructor(scope: Construct, name: string, options: FileBaseOptions) {
+    super(scope, name);
+    this.relativePath = options.filePath;
   }
 
-  protected abstract synthesizeContent(): string;
+  protected abstract synthesizeContent(): string | undefined;
 
   public synthesize() {
-    const outdir = this.project.outdir;
+    const outdir = Project.of(this).outdir;
     const filePath = path.join(outdir, this.relativePath);
     const content = this.synthesizeContent();
     if (content === undefined) {

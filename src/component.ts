@@ -1,8 +1,8 @@
-import { Project } from './project';
+import { Construct } from 'constructs';
 
-export class Component {
-  constructor(public readonly project: Project) {
-    project._addComponent(this);
+export class Component extends Construct {
+  constructor(scope: Construct, name: string) {
+    super(scope, name);
   }
 
   public synthesize() {}

@@ -1,14 +1,13 @@
-import { Component } from ".";
+import { IConstruct } from "constructs";
 
 const ASPECTS_SYMBOL = Symbol('miniprojen-aspects');
 
 export interface IAspect {
-  // node type should be IConstruct?
-  visit(node: Component): void;
+  visit(node: IConstruct): void;
 }
 
 export class Aspects {
-  public static of(scope: any): Aspects {
+  public static of(scope: IConstruct): Aspects {
     let aspects = (scope as any)[ASPECTS_SYMBOL];
     if (!aspects) {
       aspects = new Aspects(scope);

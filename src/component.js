@@ -1,12 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Component = void 0;
-var Component = /** @class */ (function () {
-    function Component(project) {
-        this.project = project;
-        project._addComponent(this);
+const constructs_1 = require("constructs");
+class Component extends constructs_1.Construct {
+    constructor(scope, name) {
+        super(scope, name);
     }
-    Component.prototype.synthesize = function () { };
-    return Component;
-}());
+    synthesize() { }
+}
 exports.Component = Component;

@@ -18,45 +18,38 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Project = void 0;
-var path = __importStar(require("path"));
-var cleanup_1 = require("./cleanup");
-var Project = /** @class */ (function () {
-    function Project(options) {
+const constructs_1 = require("constructs");
+const path = __importStar(require("path"));
+const cleanup_1 = require("./cleanup");
+const component_1 = require("./component");
+class Project extends constructs_1.Construct {
+    constructor(options) {
         var _a;
-        this._components = new Array();
+        super(undefined, '');
         this.name = options.name;
         this.outdir = path.resolve((_a = options.outdir) !== null && _a !== void 0 ? _a : '.');
     }
-    Object.defineProperty(Project.prototype, "components", {
-        get: function () {
-            return __spreadArray([], this._components, true);
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Project.prototype._addComponent = function (component) {
-        this._components.push(component);
-    };
-    Project.prototype.synth = function () {
+    static of(c) {
+        if (c instanceof Project) {
+            return c;
+        }
+        const parent = c.node.scope;
+        if (!parent) {
+            throw new Error('cannot find a parent project (directly or indirectly)');
+        }
+        return Project.of(parent);
+    }
+    synth() {
         console.log('Synthesizing project...');
         (0, cleanup_1.cleanup)(this.outdir, []);
-        for (var _i = 0, _a = this._components; _i < _a.length; _i++) {
-            var component = _a[_i];
-            component.synthesize();
+        for (const child of this.node.children) {
+            if (child instanceof component_1.Component) {
+                child.synthesize();
+            }
         }
         console.log('Synthesis complete.');
-    };
-    return Project;
-}());
+    }
+}
 exports.Project = Project;

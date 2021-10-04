@@ -1,23 +1,14 @@
 "use strict";
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Aspects = void 0;
-var ASPECTS_SYMBOL = Symbol('miniprojen-aspects');
-var Aspects = /** @class */ (function () {
-    function Aspects(scope) {
+const ASPECTS_SYMBOL = Symbol('miniprojen-aspects');
+class Aspects {
+    constructor(scope) {
         this.scope = scope;
         this._aspects = new Array();
     }
-    Aspects.of = function (scope) {
-        var aspects = scope[ASPECTS_SYMBOL];
+    static of(scope) {
+        let aspects = scope[ASPECTS_SYMBOL];
         if (!aspects) {
             aspects = new Aspects(scope);
             Object.defineProperty(scope, ASPECTS_SYMBOL, {
@@ -27,17 +18,12 @@ var Aspects = /** @class */ (function () {
             });
         }
         return aspects;
-    };
-    Aspects.prototype.add = function (aspect) {
+    }
+    add(aspect) {
         this._aspects.push(aspect);
-    };
-    Object.defineProperty(Aspects.prototype, "aspects", {
-        get: function () {
-            return __spreadArray([], this._aspects, true);
-        },
-        enumerable: false,
-        configurable: true
-    });
-    return Aspects;
-}());
+    }
+    get aspects() {
+        return [...this._aspects];
+    }
+}
 exports.Aspects = Aspects;

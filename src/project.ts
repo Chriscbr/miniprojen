@@ -1,3 +1,4 @@
+import { Construct, IConstruct } from 'constructs';
 import * as path from 'path';
 import { cleanup } from './cleanup';
 import { Component } from './component';
@@ -7,21 +8,27 @@ export interface ProjectOptions {
   readonly outdir?: string;
 }
 
-export class Project {
+export class Project extends Construct {
+   public static of(c: IConstruct): Project {
+    if (c instanceof Project) {
+      return c;
+    }
+
+    const parent = c.node.scope as Construct;
+    if (!parent) {
+      throw new Error('cannot find a parent project (directly or indirectly)');
+    }
+
+    return Project.of(parent);
+  }
+
   public readonly name: string;
   public readonly outdir: string;
-  private readonly _components = new Array<Component>();
+
   constructor(options: ProjectOptions) {
+    super(undefined as any, '');
     this.name = options.name;
     this.outdir = path.resolve(options.outdir ?? '.');
-  }
-
-  public get components() {
-    return [...this._components];
-  }
-
-  public _addComponent(component: Component) {
-    this._components.push(component);
   }
 
   public synth() {
@@ -29,8 +36,10 @@ export class Project {
 
     cleanup(this.outdir, []);
 
-    for (const component of this._components) {
-      component.synthesize();
+    for (const child of this.node.children) {
+      if (child instanceof Component) {
+        child.synthesize();
+      }
     }
 
     console.log('Synthesis complete.');

@@ -16,3 +16,4 @@ __exportStar(require("./common"), exports);
 __exportStar(require("./component"), exports);
 __exportStar(require("./file"), exports);
 __exportStar(require("./project"), exports);
+__exportStar(require("./textfile"), exports);

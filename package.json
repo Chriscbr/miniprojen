@@ -6,7 +6,8 @@
   "scripts": {
     "compile": "tsc --build",
     "watch": "tsc --build --watch",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "synth": "ts-node .pjrc.ts"
   },
   "author": "Christopher Rybicki",
   "license": "Apache-2.0",
@@ -14,9 +15,11 @@
     "@types/fs-extra": "^9.0.13",
     "@types/minimatch": "^3.0.5",
     "@types/node": "^16.10.2",
+    "ts-node": "^10.2.1",
     "typescript": "^4.4.3"
   },
   "dependencies": {
+    "constructs": "^10.0.5",
     "fs-extra": "^10.0.0",
     "minimatch": "^3.0.4"
   }
