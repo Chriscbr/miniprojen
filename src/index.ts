@@ -5,3 +5,4 @@ export * from './component';
 export * from './file';
 export * from './project';
 export * from './textfile';
+export * from './ignorefile';
