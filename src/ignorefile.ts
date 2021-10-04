@@ -1,6 +1,6 @@
-import { Construct } from "constructs";
+import { Construct, IConstruct } from "constructs";
 import { Component } from "./component";
-import { FileBase, FileBaseOptions } from "./file";
+import { FileBase } from "./file";
 import { TextFile } from "./textfile";
 
 export interface IIgnoreFile {
@@ -8,20 +8,17 @@ export interface IIgnoreFile {
   include(...patterns: string[]): void;
 }
 
-export interface IgnoreFileOptions extends FileBaseOptions {
-  readonly filePath: string;
+export interface IgnoreFileOptions {
   readonly patterns?: string[];
 }
 
 export class IgnoreFile extends Component implements IIgnoreFile {
   private readonly patterns: string[];
-  private readonly filePath: string;
 
-  constructor(scope: Construct, name: string, options: IgnoreFileOptions) {
-    super(scope, name);
+  constructor(scope: Construct, filePath: string, options: IgnoreFileOptions = {}) {
+    super(scope, filePath);
     this.patterns = options.patterns ?? [];
-    this.filePath = options.filePath;
-    new TextFile(this.filePath, {
+    new TextFile(this, filePath, {
       lines: {
         toJSON: () => {
           return [
@@ -41,16 +38,18 @@ export class IgnoreFile extends Component implements IIgnoreFile {
   public include(...patterns: string[]) {
     this.patterns.push(...patterns.map(x => '!' + x));
   }
+
+  public visit(_: IConstruct) {}
 }
 
 export class Gitignore extends IgnoreFile {
   constructor(scope: Construct) {
-    super(scope, '.gitignore', { filePath: '.gitignore' });
+    super(scope, '.gitignore');
   }
 }
 
 export class Npmignore extends IgnoreFile {
   constructor(scope: Construct) {
-    super(scope, '.npmignore', { filePath: '.npmignore' });
+    super(scope, '.npmignore');
   }
 }

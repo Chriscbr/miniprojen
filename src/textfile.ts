@@ -1,5 +1,5 @@
-import { FileBase, FileBaseOptions } from "./file";
-import { resolve } from "./_resolve";
+import { Construct } from "constructs";
+import { FileBase, FileBaseOptions, IResolver } from "./file";
 
 export interface TextFileOptions extends FileBaseOptions {
   readonly lines?: string[];
@@ -8,13 +8,14 @@ export interface TextFileOptions extends FileBaseOptions {
 export class TextFile extends FileBase {
   private readonly lines: string[];
 
-  constructor(filePath: string, options: TextFileOptions) {
-    super(filePath, options);
+  constructor(scope: Construct, filePath: string, options: TextFileOptions) {
+    super(scope, filePath, options);
 
     this.lines = options.lines ?? [];
   }
 
-  protected synthesizeContent() {
-    return resolve(this.lines).length > 0 ? this.lines.join('\n') : undefined;
+  protected synthesizeContent(resolver: IResolver) {
+    const lines = resolver.resolve(this.lines);
+    return lines.length > 0 ? lines.join('\n') : undefined;
   }
 }

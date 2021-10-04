@@ -1,9 +1,9 @@
-import { Construct } from 'constructs';
+import { Construct, IConstruct } from 'constructs';
+import { IAspect } from './aspect';
 
-export class Component extends Construct {
+export abstract class Component extends Construct implements IAspect {
   constructor(scope: Construct, name: string) {
     super(scope, name);
   }
-
-  public synthesize() {}
+  public abstract visit(node: IConstruct): void;
 }

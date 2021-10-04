@@ -3,6 +3,7 @@ import * as path from 'path';
 import { Aspects, IAspect } from './aspect';
 import { cleanup } from './cleanup';
 import { Component } from './component';
+import { FileBase } from './file';
 
 export interface ProjectOptions {
   readonly name: string;
@@ -32,24 +33,25 @@ export class Project extends Construct {
     this.outdir = path.resolve(options.outdir ?? '.');
   }
 
-  public addAspects(...aspects: IAspect[]) {
-    for (const aspect of aspects) {
-      Aspects.of(this).add(aspect);
-    }
-  }
-
   public synth() {
     console.log('Synthesizing project...');
 
     cleanup(this.outdir, []);
 
+    // not sure if this is best approach
+    for (const c of this.node.findAll()) {
+      if (c instanceof Component) {
+        Aspects.of(this).add(c);
+      }
+    }
+
     // TODO: validate / enforce that invoking aspects does not
     // modify the construct tree (e.g. adding components)
     invokeAspects(this);
 
-    for (const child of this.node.children) {
-      if (child instanceof Component) {
-        child.synthesize();
+    for (const c of this.node.findAll()) {
+      if (c instanceof FileBase) {
+        c.synthesize();
       }
     }
 
@@ -91,7 +93,11 @@ function invokeAspects(root: IConstruct) {
     }
 
     for (const child of construct.node.children) {
-      recurse(child, allAspectsHere);
+      // (new) we allow Component's to be visited, but not files, in order to
+      // separate the control plane and data plane
+      if (child instanceof Component) {
+        recurse(child, allAspectsHere);
+      }
     }
   }
 }

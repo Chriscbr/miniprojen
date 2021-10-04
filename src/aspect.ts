@@ -10,7 +10,7 @@ export class Aspects {
   public static of(scope: IConstruct): Aspects {
     let aspects = (scope as any)[ASPECTS_SYMBOL];
     if (!aspects) {
-      aspects = new Aspects(scope);
+      aspects = new Aspects();
 
       Object.defineProperty(scope, ASPECTS_SYMBOL, {
         value: aspects,
@@ -22,7 +22,7 @@ export class Aspects {
   }
 
   private readonly _aspects = new Array<IAspect>();
-  private constructor(private readonly scope: any) { }
+  private constructor() { }
 
   public add(aspect: IAspect) {
     this._aspects.push(aspect);
