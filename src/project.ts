@@ -33,6 +33,40 @@ export class Project extends Construct {
     this.outdir = path.resolve(options.outdir ?? '.');
   }
 
+  /**
+   * All components in this project.
+   */
+   public get components(): Component[] {
+    return this.node.findAll().filter(Component.isComponent);
+  }
+
+  /**
+   * All files in this project.
+   */
+  public get files(): FileBase[] {
+    return this.node.findAll()
+      .filter(FileBase.isFile)
+      .sort((f1, f2) => f1.relativePath.localeCompare(f2.relativePath));
+  }
+
+  /**
+   * Finds a file at the specified relative path within this project.
+   *
+   * @param filePath The file path. If this path is relative, it will be resolved
+   * from the root of _this_ project.
+   * @returns a `FileBase` or undefined if there is no file in that path
+   */
+   public tryFindFile(filePath: string): FileBase | undefined {
+    const absolute = path.isAbsolute(filePath) ? filePath : path.resolve(this.outdir, filePath);
+    for (const file of this.files) {
+      if (absolute === file.absolutePath) {
+        return file;
+      }
+    }
+
+    return undefined;
+  }
+
   public synth() {
     console.log('Synthesizing project...');
 
