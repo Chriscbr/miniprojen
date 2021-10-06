@@ -1,22 +1,5 @@
 import { Construct, IConstruct } from 'constructs';
-import { Component, FileBase, Gitignore, IAspect, Npmignore, Project, TextFile } from './src';
-
-// example 1
-class Gitattributes extends TextFile implements IAspect {
-  // pretend we have logic for generating this file
-  synthesizeContent() { return '' }
-
-  visit(c: IConstruct) {
-    if (c instanceof Gitignore) {
-      c.include(this.relativePath);
-    }
-    // not all projects are node projects (so they might not have npmignore)
-    // so this kind of logic isn't possible in current projen!
-    if (c instanceof Npmignore) {
-      c.exclude(this.relativePath)
-    }
-  }
-}
+import { Component, FileBase, GitAttributes, Gitignore, IAspect, Npmignore, Project, TextFile } from './src';
 
 // example 2
 
@@ -132,6 +115,8 @@ gitignore.exclude('.DS_Store');
 // we added the dependencies component last and
 // yet everything still works! 😱
 new Dependencies(project);
+
+new GitAttributes(project);
 
 // *****
 // FILES (L0/L1)

@@ -48,7 +48,7 @@ export abstract class FileBase extends Construct {
    */
   public readonly absolutePath: string;
 
-  constructor(scope: Construct, filePath: string, options: FileBaseOptions) {
+  constructor(scope: Construct, filePath: string, options: FileBaseOptions = {}) {
     super(scope, filePath);
 
     this.readonly = options.readonly ?? true;
