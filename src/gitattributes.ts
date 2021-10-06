@@ -1,7 +1,8 @@
 import { Construct, IConstruct } from "constructs";
 import { Component } from "./component";
-import { FileBase, IResolver } from "./file";
+import { FileBase } from "./file";
 import { Gitignore, Npmignore } from "./ignorefile";
+import { RawFile } from "./rawfile";
 
 /**
  * Assign attributes to file names in a git repository.
@@ -15,8 +16,8 @@ export class GitAttributes extends Component {
   public constructor(scope: Construct) {
     super(scope, 'GitAttributes');
 
-    this.file = new GitAttributesFile(this, '.gitattributes', {
-      attributes: this.attributes,
+    this.file = new RawFile(this, '.gitattributes', {
+      contents: () => this.renderContents(),
     });
 
     this.annotateGenerated(`/${this.file.relativePath}`);
@@ -52,29 +53,7 @@ export class GitAttributes extends Component {
     this.addAttributes(glob, 'linguist-generated');
   }
 
-  public visit(node: IConstruct) {
-    if (node instanceof Gitignore) {
-      node.include(this.file.relativePath);
-    }
-    if (node instanceof Npmignore) {
-      node.exclude(this.file.relativePath);
-    }
-  }
-}
-
-export interface GitAttributesFileOptions {
-  readonly attributes: { [key: string]: string[] };
-}
-
-export class GitAttributesFile extends FileBase {
-  private readonly attributes: { [key: string]: string[] };
-
-  constructor(scope: Construct, filePath: string, options: GitAttributesFileOptions) {
-    super(scope, filePath);
-    this.attributes = options.attributes;
-  }
-
-  protected synthesizeContent(resolver: IResolver): string | undefined {
+  private renderContents() {
     const entries = Object.entries(this.attributes)
       .sort(([l], [r]) => l.localeCompare(r));
 
@@ -87,5 +66,14 @@ export class GitAttributesFile extends FileBase {
       '',
       ...entries.map(([name, attributes]) => `${name}\t${Array.from(attributes).join(' ')}`),
     ].join('\n');
+  }
+
+  public visit(node: IConstruct) {
+    if (node instanceof Gitignore) {
+      node.include(this.file.relativePath);
+    }
+    if (node instanceof Npmignore) {
+      node.exclude(this.file.relativePath);
+    }
   }
 }

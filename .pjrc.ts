@@ -39,9 +39,6 @@ class Typescript extends Component {
     super(scope, 'Typescript');
     this.typescriptVersion = options.typescriptVersion ?? '*';
 
-    // this.node is referring to a "tree" node - this is a little confusing
-    this.node.addDependency(node); // not sure if this is needed
-
     // new TypescriptConfig(this, ...)
   }
   visit(c: IConstruct) {
