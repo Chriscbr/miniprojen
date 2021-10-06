@@ -1,5 +1,5 @@
 import { Construct, IConstruct } from 'constructs';
-import { Component, FileBase, GitAttributes, Gitignore, IAspect, Npmignore, Project, TextFile } from './src';
+import { Component, FileBase, GitAttributes, Gitignore, IAspect, JsonFile, Npmignore, Project, TextFile } from './src';
 
 // example 2
 
@@ -121,6 +121,10 @@ new GitAttributes(project);
 
 new TextFile(project, 'hello.txt', {
   lines: [TextFile.PROJEN_MARKER, '', 'Hello world!']
+});
+
+new JsonFile(project, 'hi.json', {
+  obj: { a: 5, b: 7 }
 });
 
 // Q: are there cases where one component needs to decide whether
