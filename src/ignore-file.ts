@@ -1,7 +1,7 @@
 import { Construct, IConstruct } from "constructs";
 import { Component } from "./component";
 import { FileBase } from "./file";
-import { TextFile } from "./textfile";
+import { TextFile } from "./text-file";
 
 export interface IIgnoreFile {
   exclude(...patterns: string[]): void;

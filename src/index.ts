@@ -5,5 +5,5 @@ export * from './component';
 export * from './file';
 export * from './gitattributes';
 export * from './project';
-export * from './textfile';
-export * from './ignorefile';
+export * from './text-file';
+export * from './ignore-file';

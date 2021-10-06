@@ -1,8 +1,8 @@
 import { Construct, IConstruct } from "constructs";
 import { Component } from "./component";
 import { FileBase } from "./file";
-import { Gitignore, Npmignore } from "./ignorefile";
-import { RawFile } from "./rawfile";
+import { Gitignore, Npmignore } from "./ignore-file";
+import { RawFile } from "./raw-file";
 
 /**
  * Assign attributes to file names in a git repository.
