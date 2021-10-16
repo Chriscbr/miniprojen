@@ -38,6 +38,8 @@ export interface FileBaseOptions {
 
   /**
    * Whether the gitignore file should be modified.
+   * 
+   * @default true
    */
   readonly editGitignore?: boolean;
 
@@ -46,12 +48,14 @@ export interface FileBaseOptions {
    * included in the published package (false). If `editNpmignore` is false, then
    * the npmignore file will not be modified in either way.
    *
-   * @default true
+   * @default false
    */
    readonly npmignore?: boolean;
 
    /**
     * Whether the npmignore file should be modified.
+    * 
+    * @default true
     */
    readonly editNpmignore?: boolean;
 

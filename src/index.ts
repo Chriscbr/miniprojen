@@ -9,3 +9,5 @@ export * from './json-file';
 export * from './object-file';
 export * from './project';
 export * from './text-file';
+export * from './typescript';
+export * from './tsconfig';

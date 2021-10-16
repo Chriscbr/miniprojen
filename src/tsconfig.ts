@@ -1,13 +1,12 @@
 import { Construct, IConstruct } from 'constructs';
 import { Component } from './component';
-import { Gitignore } from './ignore-file';
 import { JsonFile } from './json-file';
 
 export interface TypescriptConfigOptions {
   /**
    * @default "tsconfig.json"
    */
-  readonly fileName?: string;
+  readonly filePath?: string;
   /**
    * Specifies a list of glob patterns that match TypeScript files to be included in compilation.
    *
@@ -372,23 +371,22 @@ export class TypescriptConfig extends Component {
 
   constructor(scope: Construct, name: string, options: TypescriptConfigOptions) {
     super(scope, name);
-    const fileName = options.fileName ?? 'tsconfig.json';
+    const filePath = options.filePath ?? 'tsconfig.json';
 
     this.include = options.include ?? ['**/*.ts'];
     this.exclude = options.exclude ?? ['node_modules'];
-    this.fileName = fileName;
+    this.fileName = filePath;
 
     this.compilerOptions = options.compilerOptions;
 
-    this.file = new JsonFile(this, fileName, {
+    this.file = new JsonFile(scope, filePath, {
       obj: {
         compilerOptions: this.compilerOptions,
         include: () => this.include,
         exclude: () => this.exclude,
       },
+      npmignore: true,
     });
-
-    // project.npmignore?.exclude(`/${fileName}`);
   }
 
   public addInclude(pattern: string) {
@@ -399,9 +397,5 @@ export class TypescriptConfig extends Component {
     this.exclude.push(pattern);
   }
 
-  public visit(node: IConstruct) {
-    if (node instanceof Gitignore) {
-      node.include('')
-    }
-  }
+  public visit(_node: IConstruct): void {}
 }

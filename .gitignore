@@ -3,9 +3,11 @@
 /.DS_Store
 node_modules/**
 src/**/*.js
+src/**/*.d.ts
 /.gitattributes
 /.gitignore
 /.npmignore
 /deps.txt
 /hello.txt
 /hi.json
+/tsconfig.json

@@ -1,5 +1,5 @@
 import { Construct, IConstruct } from 'constructs';
-import { Component, FileBase, GitAttributes, Gitignore, IAspect, JsonFile, Npmignore, Project, TextFile } from './src';
+import { Component, FileBase, GitAttributes, Gitignore, IAspect, JsonFile, Npmignore, Project, TextFile, Typescript } from './src';
 
 // example 2
 
@@ -25,43 +25,13 @@ class Dependencies extends Component implements IAspect {
   public addDevDeps(...deps: string[]) {
     this.allDeps.push(...deps);
   }
-  public visit(c: IConstruct) {}
-}
-
-interface TypescriptOptions {
-  readonly typescriptVersion?: string;
-}
-
-class Typescript extends Component {
-  private readonly typescriptVersion: string;
-  constructor(scope: Construct, name: string, options: TypescriptOptions) {
-    super(scope, name);
-    this.typescriptVersion = options.typescriptVersion ?? '*';
-
-    // new TypescriptConfig(this, ...)
-  }
-  visit(c: IConstruct) {
-    // now, having projen manage dependencies is optional!
-    // and it's VERY CLEAR where any dependency logic *has* to reside
-    if (c instanceof Dependencies) {
-      c.addDevDeps(`typescript^${this.typescriptVersion ?? '*'}`);
-      c.addDevDeps('@types/node');
-    }
-
-    if (c instanceof Gitignore) {
-      c.exclude('src/**/*.js');
-    }
-
-    if (c instanceof Npmignore) {
-      c.include('src/**/*.js');
-    }
-  }
+  public visit(_c: IConstruct) {}
 }
 
 interface NodeOptions {}
 
 class Node extends Component {
-  constructor(scope: Construct, name: string, options: NodeOptions = {}) {
+  constructor(scope: Construct, name: string, _options: NodeOptions = {}) {
     super(scope, name);
 
     new Npmignore(this);
@@ -99,11 +69,9 @@ const project = new Project({
 // the order we add these doesn't matter unless there are
 // dependencies between them via constructor arguments!
 
-const node = new Node(project, 'Node');
+new Node(project, 'Node');
 
-const ts = new Typescript(project, 'TypeScript', {
-  typescriptVersion: '4.4',
-});
+new Typescript(project, 'TypeScript');
 
 const gitignore = new Gitignore(project);
 gitignore.exclude('/.DS_Store');

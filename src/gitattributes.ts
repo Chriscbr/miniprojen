@@ -11,12 +11,11 @@ import { TextFile } from "./text-file";
  */
 export class GitAttributes extends Component {
   private readonly attributes: Record<string, string[]> = {};
-  private readonly file: FileBase;
 
   public constructor(scope: Construct, name: string) {
     super(scope, name);
 
-    this.file = new TextFile(this, '.gitattributes', {
+    new TextFile(this, '.gitattributes', {
       contents: () => this.renderContents(),
     });
   }
@@ -74,5 +73,5 @@ export class GitAttributes extends Component {
     ].join('\n');
   }
 
-  public visit(node: IConstruct) {}
+  public visit(_node: IConstruct) {}
 }
