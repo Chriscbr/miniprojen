@@ -19,6 +19,46 @@ export interface FileBaseOptions {
    * @default false
    */
   readonly executable?: boolean;
+
+  /**
+   * Whether the file should be marked as generated on GitHub.
+   *
+   * @default true
+   */
+  readonly annotateGenerated?: boolean;
+
+  /**
+   * Whether this file should be ignored by git (true), or
+   * tracked by git (false). If `editGitignore` is false, then
+   * the gitignore file will not be modified in either way.
+   *
+   * @default true
+   */
+  readonly gitignore?: boolean;
+
+  /**
+   * Whether the gitignore file should be modified.
+   */
+  readonly editGitignore?: boolean;
+
+  /**
+   * Whether this file should be ignored when publishing to npm (true), or
+   * included in the published package (false). If `editNpmignore` is false, then
+   * the npmignore file will not be modified in either way.
+   *
+   * @default true
+   */
+   readonly npmignore?: boolean;
+
+   /**
+    * Whether the npmignore file should be modified.
+    */
+   readonly editNpmignore?: boolean;
+
+   /**
+    * Extra file metadata.
+    */
+   [key: string]: any;
 }
 
 export abstract class FileBase extends Construct {
@@ -51,22 +91,34 @@ export abstract class FileBase extends Construct {
   constructor(scope: Construct, filePath: string, options: FileBaseOptions = {}) {
     super(scope, filePath);
 
+    this.relativePath = filePath;
     this.readonly = options.readonly ?? true;
     this.executable = options.executable ?? false;
-    this.relativePath = filePath;
 
-    // const committed = options.committed ?? true;
-    // if (committed && filePath !== '.gitattributes') {
-    //   project.root.annotateGenerated(`/${filePath}`);
-    // }
+    const annotateGenerated = options.annotateGenerated ?? true;
+    const gitignore = options.gitignore ?? true;
+    const editGitignore = options.editGitignore ?? true;
+    const npmignore = options.npmignore ?? false;
+    const editNpmignore = options.editNpmignore ?? true;
 
-    const outdir = Project.of(this).outdir;
-    this.absolutePath = path.resolve(outdir, filePath);
+    const project = Project.of(this);
+
+    project.fileMetadata.add(this.relativePath, {
+      readonly: this.readonly,
+      executable: this.executable,
+      annotateGenerated,
+      gitignore,
+      editGitignore,
+      npmignore,
+      editNpmignore,
+    })
+
+    this.absolutePath = path.resolve(project.outdir, filePath);
 
     // verify file path is unique within project tree
     const existing = Project.of(this).tryFindFile(this.absolutePath);
     if (existing && existing !== this) {
-      throw new Error(`there is already a file under ${path.relative(outdir, this.absolutePath)}`);
+      throw new Error(`there is already a file under ${path.relative(project.outdir, this.absolutePath)}`);
     }
   }
 
@@ -95,7 +147,9 @@ export abstract class FileBase extends Construct {
     const outdir = Project.of(this).outdir;
     const filePath = path.join(outdir, this.relativePath);
     const resolver: IResolver = { resolve: (obj, options) => resolve(obj, options) };
+    console.log(filePath);
     const content = this.synthesizeContent(resolver);
+    console.log(content);
     if (content === undefined) {
       return; // skip
     }

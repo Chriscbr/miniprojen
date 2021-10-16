@@ -6,35 +6,26 @@ import { FileBase, FileBaseOptions, IResolver } from "./file";
  */
  export interface TextFileOptions extends FileBaseOptions {
   /**
-   * The contents of the text file. You can use `addLine()` to append lines.
+   * The contents of the file. Must be a string, or resolve to a string
+   * via the `resolver` function.
    *
-   * @default [] empty file
+   * @default - empty file
    */
-  readonly lines?: string[];
+  readonly contents: any;
 }
 
 /**
- * A text file.
+ * A (raw) text file.
  */
 export class TextFile extends FileBase {
-  private readonly lines: string[];
+  private readonly contents: any;
 
   constructor(scope: Construct, filePath: string, options: TextFileOptions) {
     super(scope, filePath, options);
-
-    this.lines = options.lines ?? [];
-  }
-
-  /**
-   * Adds a line to the text file.
-   * @param line the line to add (can use tokens)
-   */
-   public addLine(line: string) {
-    this.lines.push(line);
+    this.contents = options.contents;
   }
 
   protected synthesizeContent(resolver: IResolver) {
-    const lines = resolver.resolve(this.lines);
-    return lines && lines.length > 0 ? lines.join('\n') : undefined;
+    return resolver.resolve(this.contents);
   }
 }

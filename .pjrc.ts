@@ -9,16 +9,15 @@ class Dependencies extends Component implements IAspect {
   constructor(scope: Construct, name: string) {
     super(scope, name);
     new TextFile(this, 'deps.txt', {
-      lines: {
-        toJSON: () => {
-          return [
-            '# ' + FileBase.PROJEN_MARKER,
-            '',
-            ...(this.allDeps || []),
-          ];
-        }
-      } as any,
-    })
+      contents: () => this.renderDeps(),
+    });
+  }
+  private renderDeps() {
+    return [
+      '# ' + FileBase.PROJEN_MARKER,
+      '',
+      ...(this.allDeps || []),
+    ].join('\n');
   }
   public addDeps(...deps: string[]) {
     this.allDeps.push(...deps);
@@ -102,7 +101,7 @@ const project = new Project({
 
 const node = new Node(project, 'Node');
 
-new Typescript(project, 'TypeScript', {
+const ts = new Typescript(project, 'TypeScript', {
   typescriptVersion: '4.4',
 });
 
@@ -120,7 +119,7 @@ new GitAttributes(project, 'GitAttributes');
 // *****
 
 new TextFile(project, 'hello.txt', {
-  lines: [TextFile.PROJEN_MARKER, '', 'Hello world!']
+  contents: [TextFile.PROJEN_MARKER, '', 'Hello world!'].join('\n')
 });
 
 new JsonFile(project, 'hi.json', {

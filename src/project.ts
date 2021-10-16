@@ -4,6 +4,7 @@ import { Aspects, IAspect } from './aspect';
 import { cleanup } from './cleanup';
 import { Component } from './component';
 import { FileBase } from './file';
+import { FileMetadata } from './metadata';
 
 export interface ProjectOptions {
   readonly name: string;
@@ -26,11 +27,13 @@ export class Project extends Construct {
 
   public readonly name: string;
   public readonly outdir: string;
+  public readonly fileMetadata: FileMetadata;
 
   constructor(options: ProjectOptions) {
     super(undefined as any, options.name);
     this.name = options.name;
     this.outdir = path.resolve(options.outdir ?? '.');
+    this.fileMetadata = FileMetadata.of(this);
   }
 
   /**
@@ -72,7 +75,6 @@ export class Project extends Construct {
 
     cleanup(this.outdir, []);
 
-    // not sure if this is best approach
     for (const c of this.node.findAll()) {
       if (c instanceof Component) {
         Aspects.of(this).add(c);

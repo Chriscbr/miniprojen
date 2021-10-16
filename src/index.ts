@@ -8,5 +8,4 @@ export * from './ignore-file';
 export * from './json-file';
 export * from './object-file';
 export * from './project';
-export * from './raw-file';
 export * from './text-file';

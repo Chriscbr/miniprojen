@@ -19,16 +19,16 @@ export class IgnoreFile extends Component implements IIgnoreFile {
     super(scope, filePath);
     this.patterns = options.patterns ?? [];
     new TextFile(this, filePath, {
-      lines: {
-        toJSON: () => {
-          return [
-            '# ' + FileBase.PROJEN_MARKER,
-            '',
-            ...(this.patterns || []),
-          ];
-        }
-      } as any,
-    })
+      contents: () => this.renderContents(),
+    });
+  }
+
+  private renderContents() {
+    return [
+      '# ' + FileBase.PROJEN_MARKER,
+      '',
+      ...(this.patterns || []),
+    ].join('\n');
   }
 
   public exclude(...patterns: string[]) {

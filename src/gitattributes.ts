@@ -2,7 +2,7 @@ import { Construct, IConstruct } from "constructs";
 import { Component } from "./component";
 import { FileBase } from "./file";
 import { Gitignore, Npmignore } from "./ignore-file";
-import { RawFile } from "./raw-file";
+import { TextFile } from "./text-file";
 
 /**
  * Assign attributes to file names in a git repository.
@@ -16,7 +16,7 @@ export class GitAttributes extends Component {
   public constructor(scope: Construct, name: string) {
     super(scope, name);
 
-    this.file = new RawFile(this, '.gitattributes', {
+    this.file = new TextFile(this, '.gitattributes', {
       contents: () => this.renderContents(),
     });
 
