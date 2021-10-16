@@ -106,7 +106,7 @@ const ts = new Typescript(project, 'TypeScript', {
 });
 
 const gitignore = new Gitignore(project);
-gitignore.exclude('.DS_Store');
+gitignore.exclude('/.DS_Store');
 
 // we added the dependencies component last and
 // yet everything still works! 😱

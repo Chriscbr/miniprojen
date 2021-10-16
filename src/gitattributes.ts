@@ -1,7 +1,7 @@
 import { Construct, IConstruct } from "constructs";
+import { Project } from ".";
 import { Component } from "./component";
 import { FileBase } from "./file";
-import { Gitignore, Npmignore } from "./ignore-file";
 import { TextFile } from "./text-file";
 
 /**
@@ -19,8 +19,6 @@ export class GitAttributes extends Component {
     this.file = new TextFile(this, '.gitattributes', {
       contents: () => this.renderContents(),
     });
-
-    this.annotateGenerated(`/${this.file.relativePath}`);
   }
 
   /**
@@ -54,6 +52,14 @@ export class GitAttributes extends Component {
   }
 
   private renderContents() {
+    const project = Project.of(this);
+    for (const file of project.files) {
+      const metadata = project.fileMetadata.lookup(file.relativePath);
+      if (metadata && metadata.annotateGenerated) {
+        this.annotateGenerated(`/${file.relativePath}`);
+      }
+    }
+
     const entries = Object.entries(this.attributes)
       .sort(([l], [r]) => l.localeCompare(r));
 
@@ -68,12 +74,5 @@ export class GitAttributes extends Component {
     ].join('\n');
   }
 
-  public visit(node: IConstruct) {
-    if (node instanceof Gitignore) {
-      node.include(this.file.relativePath);
-    }
-    if (node instanceof Npmignore) {
-      node.exclude(this.file.relativePath);
-    }
-  }
+  public visit(node: IConstruct) {}
 }

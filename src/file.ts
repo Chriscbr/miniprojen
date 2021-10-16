@@ -147,9 +147,7 @@ export abstract class FileBase extends Construct {
     const outdir = Project.of(this).outdir;
     const filePath = path.join(outdir, this.relativePath);
     const resolver: IResolver = { resolve: (obj, options) => resolve(obj, options) };
-    console.log(filePath);
     const content = this.synthesizeContent(resolver);
-    console.log(content);
     if (content === undefined) {
       return; // skip
     }
