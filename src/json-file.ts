@@ -1,6 +1,6 @@
+import { Construct } from 'constructs';
 import { IResolver } from './file';
 import { ObjectFile, ObjectFileOptions } from './object-file';
-import { Project } from './project';
 
 /**
  * Options for `JsonFile`.
@@ -11,8 +11,8 @@ export interface JsonFileOptions extends ObjectFileOptions {}
  * Represents a JSON file.
  */
 export class JsonFile extends ObjectFile {
-  constructor(project: Project, filePath: string, options: JsonFileOptions) {
-    super(project, filePath, options);
+  constructor(scope: Construct, filePath: string, options: JsonFileOptions) {
+    super(scope, filePath, options);
 
     if (!options.obj) {
       throw new Error('"obj" cannot be undefined');

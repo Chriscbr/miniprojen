@@ -128,7 +128,7 @@ function invokeAspects(root: IConstruct) {
 
     for (const child of construct.node.children) {
       // (new) we allow Component's to be visited, but not files, in order to
-      // separate the control plane and data plane
+      // "separate" the control plane and data plane
       if (child instanceof Component) {
         recurse(child, allAspectsHere);
       }

@@ -13,8 +13,8 @@ export class GitAttributes extends Component {
   private readonly attributes: Record<string, string[]> = {};
   private readonly file: FileBase;
 
-  public constructor(scope: Construct) {
-    super(scope, 'GitAttributes');
+  public constructor(scope: Construct, name: string) {
+    super(scope, name);
 
     this.file = new RawFile(this, '.gitattributes', {
       contents: () => this.renderContents(),

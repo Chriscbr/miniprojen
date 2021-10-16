@@ -6,8 +6,8 @@ import { Component, FileBase, GitAttributes, Gitignore, IAspect, JsonFile, Npmig
 // dummy impl, where it's just a text file list of dependencies
 class Dependencies extends Component implements IAspect {
   private readonly allDeps = new Array<string>();
-  constructor(scope: Construct) {
-    super(scope, 'Dependencies');
+  constructor(scope: Construct, name: string) {
+    super(scope, name);
     new TextFile(this, 'deps.txt', {
       lines: {
         toJSON: () => {
@@ -35,8 +35,8 @@ interface TypescriptOptions {
 
 class Typescript extends Component {
   private readonly typescriptVersion: string;
-  constructor(scope: Construct, node: Node, options: TypescriptOptions) {
-    super(scope, 'Typescript');
+  constructor(scope: Construct, name: string, options: TypescriptOptions) {
+    super(scope, name);
     this.typescriptVersion = options.typescriptVersion ?? '*';
 
     // new TypescriptConfig(this, ...)
@@ -62,8 +62,8 @@ class Typescript extends Component {
 interface NodeOptions {}
 
 class Node extends Component {
-  constructor(scope: Construct, options: NodeOptions = {}) {
-    super(scope, 'Node');
+  constructor(scope: Construct, name: string, options: NodeOptions = {}) {
+    super(scope, name);
 
     new Npmignore(this);
   }
@@ -100,9 +100,9 @@ const project = new Project({
 // the order we add these doesn't matter unless there are
 // dependencies between them via constructor arguments!
 
-const node = new Node(project);
+const node = new Node(project, 'Node');
 
-new Typescript(project, node, {
+new Typescript(project, 'TypeScript', {
   typescriptVersion: '4.4',
 });
 
@@ -111,9 +111,9 @@ gitignore.exclude('.DS_Store');
 
 // we added the dependencies component last and
 // yet everything still works! 😱
-new Dependencies(project);
+new Dependencies(project, 'Dependencies');
 
-new GitAttributes(project);
+new GitAttributes(project, 'GitAttributes');
 
 // *****
 // FILES (L0/L1)
@@ -132,5 +132,9 @@ new JsonFile(project, 'hi.json', {
 // A: yes, TypeScript implies Jest should generate tsconfig.jest.json
 // Q: where would does this logic go now, if not TypescriptProject?
 // A: in either TypeScript or Jest, using the visitor pattern
+
+// Q: how do we enforce that some components can only be created once in a project?
+// A: not sure, also not sure if that's a good idea since subprojects could
+// be added in the future
 
 project.synth();

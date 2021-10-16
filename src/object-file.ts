@@ -1,5 +1,5 @@
+import { Construct } from 'constructs';
 import { FileBase, FileBaseOptions, IResolver } from './file';
-import { Project } from './project';
 import { deepMerge } from './util';
 
 /**
@@ -54,8 +54,8 @@ export abstract class ObjectFile extends FileBase {
    */
   public readonly omitEmpty: boolean;
 
-  constructor(project: Project, filePath: string, options: ObjectFileOptions) {
-    super(project, filePath, options);
+  constructor(scope: Construct, filePath: string, options: ObjectFileOptions) {
+    super(scope, filePath, options);
 
     this.obj = options.obj ?? {};
     this.marker = options.marker ?? true;
