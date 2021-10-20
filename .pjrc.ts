@@ -59,7 +59,11 @@ class Node extends Component {
 // PROJECT
 // *******
 const project = new Project({
-  name: 'miniprojen'
+  name: 'miniprojen',
+  // components: [
+  //   new Jest(<scope?>, { ... }),
+  //   new Eslint(<scope?>, { ... }),
+  // ],
 });
 
 // **********
